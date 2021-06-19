@@ -1,10 +1,9 @@
 ﻿using MT.Mvvm.Navigation;
-#if NET_Uap
-using Windows.UI.Xaml.Navigation;
-#endif
 
-#if NET_Fx
+#if NET40_OR_GREATER
 using System.Windows.Navigation;
+#else 
+using Windows.UI.Xaml.Navigation;
 #endif
 
 namespace MT.Mvvm {
@@ -12,14 +11,13 @@ namespace MT.Mvvm {
 
         public virtual void OnNavigateFrom(NavigatedArgs e) {
         }
-#if NET_Uap
+#if NET40_OR_GREATER
         public virtual void OnNavigateTo(NavigationEventArgs e) {
         }
 
         public virtual void OnNavigatingFrom(NavigatingCancelEventArgs e) {
         }
-#endif
-#if NET_Fx
+#else
         public virtual void OnNavigateTo(NavigationEventArgs e) {
         }
 

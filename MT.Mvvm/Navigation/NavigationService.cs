@@ -3,10 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+#if NET40_OR_GREATER
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Navigation;
+
+#else
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
+using Windows.UI.Xaml.Navigation;
+
+#endif
 
 namespace MT.Mvvm.Navigation {
     public class NavigationService : INavigationService {
@@ -114,22 +124,6 @@ namespace MT.Mvvm.Navigation {
             }
         }
 
-        public bool NavigateTo(string pageKey, object parameter) {
-            lock (_pagesByKey) {
-                if (!_pagesByKey.ContainsKey(pageKey)) {
-                    throw new ArgumentException($"No such page: {pageKey}.");
-                }
-                var currentPage = CurrentFrame.Content as Page;
-                if (currentPage?.DataContext is INavigable nav) {
-                    nav.OnNavigateFrom(new NavigatedArgs {
-                        Content = CurrentFrame.Content,
-                        NavigationMode = NavigationMode.New
-                    });
-                }
-                var b = CurrentFrame.Navigate(_pagesByKey[pageKey], parameter);
-                return b;
-            }
-        }
 
         public void Configura<T>() {
             var type = typeof(T);
@@ -183,6 +177,31 @@ namespace MT.Mvvm.Navigation {
                 nav.OnNavigateTo(e);
             Navigated?.Invoke(sender, e);
         }
+#if NET40_OR_GREATER
+        public bool NavigateTo(string pageKey, object parameter) {
+            lock (_pagesByKey) {
+                if (!_pagesByKey.ContainsKey(pageKey)) {
+                    throw new ArgumentException($"No such page: {pageKey}.");
+                }
+                var currentPage = CurrentFrame.Content as Page;
+                if (currentPage?.DataContext is INavigable nav) {
+                    nav.OnNavigateFrom(new NavigatedArgs {
+                        Content = CurrentFrame.Content,
+                        NavigationMode = NavigationMode.New
+                    });
+                }
+                var b = CurrentFrame.Navigate(_pagesByKey[pageKey], parameter);
+                return b;
+            }
+        }
+#else
+        public bool NavigateTo(string pageKey, NavigationTransitionInfo transInfo = null) {
+            throw new NotImplementedException();
+        }
 
+        public bool NavigateTo(string pageKey, object parameter, NavigationTransitionInfo transInfo = null) {
+            throw new NotImplementedException();
+        }
+#endif
     }
 }
