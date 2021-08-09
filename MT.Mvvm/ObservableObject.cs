@@ -8,8 +8,6 @@ using System.Threading.Tasks;
 
 namespace MT.Mvvm {
     public class ObservableObject : INotifyPropertyChanged, ICloneable {
-        public RelayCommand LoadedCommand { get; set; }
-
         public bool SetValue<T>(ref T oldValue, T newValue, [CallerMemberName] string name = null) {
             if (Equals(oldValue, newValue))
                 return false;
